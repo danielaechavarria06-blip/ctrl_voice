@@ -8,70 +8,64 @@ import time
 import paho.mqtt.client as paho
 import json
 
-# 🎨 ESTILO DANY OCEAN CON FONDO
+# 🎨 ESTILO LIMPIO OCEAN PRO
 st.markdown("""
 <style>
 .stApp {
-    background-color: #0f172a;
-    background-image: url("https://www.transparenttextures.com/patterns/bubbles.png");
+    background: linear-gradient(180deg, #020617, #0c4a6e);
     color: #e2e8f0;
 }
 
-/* Overlay para suavizar */
-.stApp::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(2, 6, 23, 0.85);
-    z-index: 0;
+/* Quitar fondo gris feo */
+iframe {
+    background-color: transparent !important;
+}
+.element-container:has(iframe) {
+    background: transparent !important;
 }
 
-/* Mantener contenido arriba */
-.block-container {
-    position: relative;
-    z-index: 1;
-}
-
-/* Títulos */
-h1, h2, h3 {
-    color: #60a5fa;
+/* HEADER */
+h1 {
     text-align: center;
+    color: #e0f2fe;
+    margin-bottom: 5px;
+}
+.subtitle {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 30px;
 }
 
-/* Card */
+/* CARD */
 .card {
-    background: rgba(17, 24, 39, 0.85);
-    padding: 30px;
-    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.75);
+    padding: 40px;
+    border-radius: 22px;
     text-align: center;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    max-width: 500px;
+    margin: auto;
 }
 
-/* Botones azules */
-.stButton > button {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-weight: 600;
-    border: none;
-    transition: all 0.25s ease;
+/* BOTONES */
+button {
+    border-radius: 14px !important;
+    font-size: 18px !important;
 }
 
-.stButton > button:hover {
-    transform: scale(1.06);
-    background: linear-gradient(135deg, #2563eb, #1e40af);
+/* TEXTO */
+.label {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: #cbd5f5;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # 🐋 HEADER
-st.markdown("## 🐋 Control por Voz")
-st.caption("Sistema IoT con estilo océano 💙")
+st.markdown("<h1>🐋 Control por Voz</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Sistema IoT con estilo océano 💙</p>", unsafe_allow_html=True)
 
 # MQTT
 def on_publish(client,userdata,result):
@@ -88,16 +82,16 @@ port=1883
 client1= paho.Client("RAYIT4")
 client1.on_message = on_message
 
-# 🧊 CARD CENTRAL
+# 🧊 CARD
 st.markdown('<div class="card">', unsafe_allow_html=True)
 
 image = Image.open('voice_ctrl.jpg')
-st.image(image, width=140)
+st.image(image, width=150)
 
-st.write("🎤 Presiona y habla (ON / OFF)")
+st.markdown("<p class='label'>🎤 Presiona y habla (ON / OFF)</p>", unsafe_allow_html=True)
 
-# BOTÓN VOZ
-stt_button = Button(label="🎙️ Hablar", width=180)
+# 🎙️ BOTÓN VOZ PRO
+stt_button = Button(label="🎙️ Hablar ahora", width=250)
 
 stt_button.js_on_event("button_click", CustomJS(code="""
     var recognition = new webkitSpeechRecognition();
@@ -132,7 +126,7 @@ if result:
     if "GET_TEXT" in result:
         texto = result.get("GET_TEXT").strip().upper()
 
-        st.success(f"{texto}")
+        st.success(f"🧠 {texto}")
 
         client1.on_publish = on_publish
         client1.connect(broker,port)
