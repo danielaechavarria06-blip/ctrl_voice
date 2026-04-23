@@ -8,7 +8,7 @@ import time
 import paho.mqtt.client as paho
 import json
 
-# 🎨 ESTILO LIMPIO OCEAN PRO
+# 🎨 ESTILOS BONITOS
 st.markdown("""
 <style>
 .stApp {
@@ -16,17 +16,14 @@ st.markdown("""
     color: #e2e8f0;
 }
 
-/* Quitar fondo gris feo */
-iframe {
-    background-color: transparent !important;
-}
-.element-container:has(iframe) {
-    background: transparent !important;
-}
+/* Quitar fondo feo */
+iframe { background-color: transparent !important; }
+.element-container:has(iframe) { background: transparent !important; }
 
 /* HEADER */
-h1 {
+.title {
     text-align: center;
+    font-size: 40px;
     color: #e0f2fe;
     margin-bottom: 5px;
 }
@@ -44,32 +41,45 @@ h1 {
     text-align: center;
     backdrop-filter: blur(12px);
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    max-width: 500px;
+    max-width: 520px;
     margin: auto;
 }
 
-/* BOTONES */
+/* BOTÓN */
 button {
-    border-radius: 14px !important;
+    border-radius: 16px !important;
     font-size: 18px !important;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    color: white !important;
+    padding: 10px;
+    transition: 0.3s;
 }
 
-/* TEXTO */
-.label {
-    margin-top: 15px;
-    margin-bottom: 15px;
-    color: #cbd5f5;
+button:hover {
+    transform: scale(1.07);
+    background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+}
+
+/* chips de acciones */
+.chip {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 5px;
+    border-radius: 20px;
+    background: rgba(59,130,246,0.2);
+    color: #93c5fd;
+    font-size: 14px;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # 🐋 HEADER
-st.markdown("<h1>🐋 Control por Voz</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Sistema IoT con estilo océano 💙</p>", unsafe_allow_html=True)
+st.markdown("<div class='title'>🐋 Control por Voz</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Interfaz multimodal IoT 💙</div>", unsafe_allow_html=True)
 
 # MQTT
 def on_publish(client,userdata,result):
-    print("dato publicado")
+    print("el dato ha sido publicado")
 
 def on_message(client, userdata, message):
     global message_received
@@ -86,12 +96,22 @@ client1.on_message = on_message
 st.markdown('<div class="card">', unsafe_allow_html=True)
 
 image = Image.open('voice_ctrl.jpg')
-st.image(image, width=150)
+st.image(image, width=160)
 
-st.markdown("<p class='label'>🎤 Presiona y habla (ON / OFF)</p>", unsafe_allow_html=True)
+st.write("🎤 Presiona el botón y habla")
 
-# 🎙️ BOTÓN VOZ PRO
-stt_button = Button(label="🎙️ Hablar ahora", width=250)
+# 💙 OPCIONES VISUALES (solo UI, no lógica)
+st.markdown("""
+<div>
+<span class="chip">🚪 abrir puerta</span>
+<span class="chip">🚪 cerrar puerta</span>
+<span class="chip">💡 prender luz</span>
+<span class="chip">💡 apagar luz</span>
+</div>
+""", unsafe_allow_html=True)
+
+# BOTÓN VOZ
+stt_button = Button(label="🎙️ Hablar", width=240)
 
 stt_button.js_on_event("button_click", CustomJS(code="""
     var recognition = new webkitSpeechRecognition();
@@ -121,22 +141,22 @@ result = streamlit_bokeh_events(
     debounce_time=0
 )
 
-# RESULTADO
+# RESULTADO (MISMA LÓGICA)
 if result:
     if "GET_TEXT" in result:
-        texto = result.get("GET_TEXT").strip().upper()
+        texto = result.get("GET_TEXT")
 
         st.success(f"🧠 {texto}")
 
         client1.on_publish = on_publish
         client1.connect(broker,port)
 
-        message = json.dumps({"Act1": texto})
-        client1.publish("cmqtt_amotorcito", message)
+        message = json.dumps({"Act1": texto.strip()})
+        client1.publish("voice_Rayita", message)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Carpeta temp
+# carpeta temp
 try:
     os.mkdir("temp")
 except:
