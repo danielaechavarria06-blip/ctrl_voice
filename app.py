@@ -8,38 +8,70 @@ import time
 import paho.mqtt.client as paho
 import json
 
-# 🎨 ESTILO MINIMAL
+# 🎨 ESTILO DANY OCEAN CON FONDO
 st.markdown("""
 <style>
 .stApp {
     background-color: #0f172a;
+    background-image: url("https://www.transparenttextures.com/patterns/bubbles.png");
     color: #e2e8f0;
+}
+
+/* Overlay para suavizar */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, 0.85);
+    z-index: 0;
+}
+
+/* Mantener contenido arriba */
+.block-container {
+    position: relative;
+    z-index: 1;
 }
 
 /* Títulos */
 h1, h2, h3 {
-    color: #38bdf8;
-}
-
-/* Botón voz */
-button {
-    border-radius: 12px !important;
-}
-
-/* Caja estilo card */
-.card {
-    background-color: #111827;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    color: #60a5fa;
     text-align: center;
+}
+
+/* Card */
+.card {
+    background: rgba(17, 24, 39, 0.85);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+/* Botones azules */
+.stButton > button {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.stButton > button:hover {
+    transform: scale(1.06);
+    background: linear-gradient(135deg, #2563eb, #1e40af);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🐋 HEADER SIMPLE
-st.markdown("## 🎤 Control por Voz")
-st.caption("Sistema IoT vía MQTT")
+# 🐋 HEADER
+st.markdown("## 🐋 Control por Voz")
+st.caption("Sistema IoT con estilo océano 💙")
 
 # MQTT
 def on_publish(client,userdata,result):
@@ -62,7 +94,7 @@ st.markdown('<div class="card">', unsafe_allow_html=True)
 image = Image.open('voice_ctrl.jpg')
 st.image(image, width=140)
 
-st.write("Presiona y habla (ON / OFF)")
+st.write("🎤 Presiona y habla (ON / OFF)")
 
 # BOTÓN VOZ
 stt_button = Button(label="🎙️ Hablar", width=180)
