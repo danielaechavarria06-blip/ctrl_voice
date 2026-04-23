@@ -8,49 +8,38 @@ import time
 import paho.mqtt.client as paho
 import json
 
-# 🎨 ESTILO OCEAN DANY
+# 🎨 ESTILO MINIMAL
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(180deg, #020617, #0c4a6e);
-    color: #e0f2fe;
+    background-color: #0f172a;
+    color: #e2e8f0;
 }
 
-/* Banner */
-.banner {
-    background: linear-gradient(90deg, #0284c7, #38bdf8);
+/* Títulos */
+h1, h2, h3 {
+    color: #38bdf8;
+}
+
+/* Botón voz */
+button {
+    border-radius: 12px !important;
+}
+
+/* Caja estilo card */
+.card {
+    background-color: #111827;
     padding: 25px;
-    border-radius: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     text-align: center;
-    margin-bottom: 25px;
-    box-shadow: 0px 5px 25px rgba(0,0,0,0.4);
-}
-
-/* Botones */
-.stButton > button {
-    background: linear-gradient(90deg, #0ea5e9, #0369a1);
-    color: white;
-    border-radius: 14px;
-    padding: 12px;
-    font-weight: bold;
-    border: none;
-    transition: 0.3s;
-}
-
-.stButton > button:hover {
-    transform: scale(1.07);
-    background: linear-gradient(90deg, #0284c7, #075985);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🐋 Banner
-st.markdown("""
-<div class="banner">
-    <h1>🐋 Control por Voz - Dany 🌊</h1>
-    <p>Habla y controla tu mundo IoT 💙</p>
-</div>
-""", unsafe_allow_html=True)
+# 🐋 HEADER SIMPLE
+st.markdown("## 🎤 Control por Voz")
+st.caption("Sistema IoT vía MQTT")
 
 # MQTT
 def on_publish(client,userdata,result):
@@ -60,24 +49,23 @@ def on_message(client, userdata, message):
     global message_received
     time.sleep(2)
     message_received=str(message.payload.decode("utf-8"))
-    st.write("📩 Respuesta:", message_received)
+    st.write("📩", message_received)
 
 broker="broker.mqttdashboard.com"
 port=1883
 client1= paho.Client("RAYIT4")
 client1.on_message = on_message
 
-# UI
-st.subheader("🎤 Control por Voz")
+# 🧊 CARD CENTRAL
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-# Imagen
 image = Image.open('voice_ctrl.jpg')
-st.image(image, width=220)
+st.image(image, width=140)
 
-st.write("💬 Presiona el botón y habla (ON / OFF)")
+st.write("Presiona y habla (ON / OFF)")
 
 # BOTÓN VOZ
-stt_button = Button(label="🎙️ Hablar", width=200)
+stt_button = Button(label="🎙️ Hablar", width=180)
 
 stt_button.js_on_event("button_click", CustomJS(code="""
     var recognition = new webkitSpeechRecognition();
@@ -112,16 +100,17 @@ if result:
     if "GET_TEXT" in result:
         texto = result.get("GET_TEXT").strip().upper()
 
-        st.success(f"🧠 Entendí: {texto}")
+        st.success(f"{texto}")
 
-        # MQTT ENVÍO (COMPATIBLE CON TU ESP32)
         client1.on_publish = on_publish
         client1.connect(broker,port)
 
         message = json.dumps({"Act1": texto})
-        client1.publish("cmqtt_amotorcito", message)  # ✅ MISMO TOPIC QUE TODO
+        client1.publish("cmqtt_amotorcito", message)
 
-# Carpeta temporal
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Carpeta temp
 try:
     os.mkdir("temp")
 except:
